@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /
+Disallow: /*?_bc_fsnf=1*
+Disallow: /*&_bc_fsnf=1*
