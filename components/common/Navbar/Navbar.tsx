@@ -1,14 +1,31 @@
 import { FC, useState, useEffect } from 'react'
+import type { AppProps } from 'next/app'
 import Link from 'next/link'
 import s from './Navbar.module.css'
 import { Logo, Container } from '@components/ui'
 import { Searchbar, UserNav } from '@components/common'
 import cn from 'classnames'
 import throttle from 'lodash.throttle'
+import type { Page } from '@bigcommerce/storefront-data-hooks/api/operations/get-all-pages'
 
-const Navbar: FC = () => {
+
+interface Props {
+  pageProps: {
+    categories?: {
+      children: [],
+      description: string,
+      entityId: number,
+      name: string,
+      path: string,
+      productCount: number
+    }[],
+    pages?: Page[]
+  }
+}
+
+const Navbar: FC<Props> = ({pageProps}) => {
   const [hasScrolled, setHasScrolled] = useState(false)
-
+  const {categories} = pageProps
   const handleScroll = () => {
     const offset = 0
     const { scrollTop } = document.documentElement
@@ -34,15 +51,13 @@ const Navbar: FC = () => {
               </a>
             </Link>
             <nav className="space-x-4 ml-6 hidden lg:block">
-              <Link href="/">
-                <a className={s.link}>All</a>
-              </Link>
-              <Link href="/search?q=clothes">
-                <a className={s.link}>Clothes</a>
-              </Link>
-              <Link href="/search?q=accessories">
-                <a className={s.link}>Accessories</a>
-              </Link>
+              {categories?.map(category => category.productCount > 0 
+              ? (
+                <Link href={`/search${category.path}`}>
+                  <a className={s.link}>{category.name}</a>
+                </Link>
+              )
+              : null)}
             </nav>
           </div>
 
